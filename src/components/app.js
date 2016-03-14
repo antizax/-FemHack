@@ -4,9 +4,7 @@ import Header from './header';
 import Description from './description';
 import NextSection from './nextsection';
 import Registration from './registration';
-// import Details from './details';
 
-// var App = 
 var App = React.createClass({
 	render: function() {
 		return (
@@ -14,8 +12,8 @@ var App = React.createClass({
 				<NavBar/>
 				<Header/>
 				<div className="container">
-					<div className="col-md-8"> <Description/> </div>
-					<div className="col-md-4"> <Registration/> </div>
+					<div className="col-sm-6"> <Description /> </div>
+					<div className="col-sm-6"> <Registration /> </div>
 				</div>
 				<NextSection/>
 			</div>

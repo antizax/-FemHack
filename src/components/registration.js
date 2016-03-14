@@ -3,14 +3,20 @@ import React from 'react';
 var Registration = React.createClass({
 	render:function(){
 		return(
-			<div>
+			<div className="container flow">
 			<h1>April 18 & 19, 2016</h1>
-				<h1>{'\u007B'}
-				  <span className="ofThe">
-				    <span className="of"> $30</span>
-				    <span className="the">All Access </span>
-				  </span>
-				  {'\u007D'}</h1>
+
+			<h1>
+				<table>
+					<tbody>
+						<tr>
+							<td><span className="curlyBrace">{'\u007B'}</span></td>
+							<td><span>$30</span>  All Access</td>
+							<td><span className="curlyBrace">{'\u007D'}</span></td>
+						</tr>
+					</tbody>
+				</table>
+			</h1>
 
 				<button className="btn btn-default">Save Your Spot!</button>
 			</div>
