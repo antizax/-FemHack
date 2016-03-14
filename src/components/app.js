@@ -14,8 +14,8 @@ var App = React.createClass({
 				<NavBar/>
 				<Header/>
 				<div className="container">
-					<Description/>
-					<Registration/>
+					<div className="col-md-8"> <Description/> </div>
+					<div className="col-md-4"> <Registration/> </div>
 				</div>
 				<NextSection/>
 			</div>

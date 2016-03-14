@@ -14,7 +14,7 @@ var Header = React.createClass({
                         <br></br>
                             {/*<h1 className="brand-heading">Grayscale</h1>*/}
                             <img src="./build/css/images/FeministHackathon.png"></img>
-                            {/*<p className="intro-text">\{ Presented by the 22nd Women Studies Conferneces \}</p>*/}
+                            <p className="intro-text"><span>{'\u007B'}</span> Presented by the 22nd Women Studies Confernce <span>{'\u007D'}</span></p>
                         </div>
                     </div>
                     <br></br>
