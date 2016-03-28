@@ -1,24 +1,28 @@
 import React from 'react';
-import NavBar from './navbar';
-import Header from './header';
-import Description from './description';
-import NextSection from './nextsection';
-import Registration from './registration';
+import { Component } from 'react';
 
-var App = React.createClass({
-	render: function() {
-		return (
-			<div id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
-				<NavBar/>
-				<Header/>
-				<div className="container">
-					<div className="col-sm-6"> <Description /> </div>
-					<div className="col-sm-6"> <Registration /> </div>
-				</div>
-				<NextSection/>
-			</div>
-		);
-	}
-});
+import Navbar from './navbar'
+import Landing from './landing'
+import About from './about'
+import Contact from './contact'
+import Description from './description'
+import ImageDiv from './image_div'
 
-module.exports = App;
+export default class App extends Component {
+  render() {
+    return (
+      <div >
+      	
+      	<Landing/>
+      	<Description/>
+      	<About/>
+      	<ImageDiv/>
+      	<Contact/>
+      	{/*<DivTwo/>
+      	<DivThree/>
+      	<Contact/>
+*/}      	<div>React simple starter</div>
+      </div>
+    );
+  }
+}

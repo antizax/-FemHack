@@ -1,19 +1,20 @@
-import React from 'react';
+import React,{Component} from 'react'
 
-var Description = React.createClass({
-	render: function() {
+export default class Description extends Component{
+	render(){
 		return(
-			<div className="container flow">
-				<h2>// Our Flow</h2>
-				<ul>
-					<li>Prototype, design and pitch a campaign, website, app or technology.</li>
-					<li>Guest panelists will lead a consensus ballot vote to choose winners.</li>
-					<li>Teams of 3-5 must consist of at least fifty percent members who do <br></br>not self identify as male.</li>
-					<li>Mentors from SCSU Computer Science Club and A100 will be available <br></br>to assist teams with their projects</li>
-				</ul>
+			<div className="description-div">
+				<h2 className="description-header">What to expect</h2>
+				<div className="container description-paragraph">
+					<p>
+						#FemHack is a Hack Jam that will be held at Southern Connecticut State University. 
+						We welcome teens and young adults to join us in building awesome software and hardware projects. 
+						Industry experts and mentors come from all over the country to create an environment that fosters an 
+						atmosphere of learning through tech talks and one-on-one guidance. We encourage beginner and advanced 
+						hackers alike to challenge themselves and expand their skills.
+					</p>
+				</div>
 			</div>
-		);
+		)
 	}
-});
-
-module.exports = Description;
+}

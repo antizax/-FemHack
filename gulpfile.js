@@ -1,68 +1,107 @@
-var gulp 		= require ('gulp'),
-	uglify		= require ('gulp-uglify'),
-	gutil		= require ('gulp-util'),
-	source		= require ('vinyl-source-stream'),
-	browserify	= require ('browserify'),
-	watchify	= require ('watchify'),
-	babelify	= require ('babelify'),
-	browserSync = require('browser-sync'),
-	buffer 		= require('vinyl-buffer');
-	reload 		= browserSync.reload,
-	stylus		= require('gulp-stylus'),
-	autoprefixer= require('gulp-autoprefixer'),
-	historyApiFallback = require('connect-history-api-fallback');
+var source = require('vinyl-source-stream');
+var gulp = require('gulp');
+var gutil = require('gulp-util');
+var browserify = require('browserify');
+var babelify = require('babelify');
+var watchify = require('watchify');
+var notify = require('gulp-notify');
+
+var stylus = require('gulp-stylus');
+var autoprefixer = require('gulp-autoprefixer');
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+var buffer = require('vinyl-buffer');
+
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
+var historyApiFallback = require('connect-history-api-fallback')
+
+
 /*
-  Browser Sync
+  Styles Task
 */
-gulp.task('browser-sync', function() {
-	browserSync({
-		// we need to disable clicks and forms for when we test multiple rooms
-		server : {},
-		middleware : [ historyApiFallback() ],
-		ghostMode: false
-	});
-});
 
 gulp.task('styles',function() {
-	// move over fonts
-	// gulp.src('css/fonts/**.*') // Matches 'client/js/somedir/somefile.js' and resolves `base` to `client/js/`
-	// 	.pipe(gulp.dest('build/css/fonts'));  // Writes 'build/somedir/somefile.js'
+  // move over fonts
 
-	// Compiles CSS
-	gulp.src('css/style.styl')
-		.pipe(stylus({
-			compress:true
-		}))
-		.pipe(autoprefixer())
-		.pipe(gulp.dest('./build/css/'))
-		.pipe(reload({stream:true}))
+  gulp.src('src/css/fonts/**.*')
+    .pipe(gulp.dest('build/css/fonts'))
+
+  // Compiles CSS
+  gulp.src('src/css/style.styl')
+    .pipe(stylus())
+    .pipe(autoprefixer())
+    .pipe(gulp.dest('./build/css/'))
+    .pipe(reload({stream:true}))
 });
 
 /*
   Images
 */
 gulp.task('images',function(){
-	gulp.src('css/images/**')
-		.pipe(gulp.dest('./build/css/images'))
+  gulp.src('src/css/images/**')
+    .pipe(gulp.dest('./build/css/images'))
 });
 
+/*
+  Browser Sync
+*/
+gulp.task('browser-sync', function() {
+    browserSync({
+        // we need to disable clicks and forms for when we test multiple rooms
+        server : {},
+        middleware : [ historyApiFallback() ],
+        ghostMode: false
+    });
+});
 
-gulp.task('default',['browser-sync','images','styles'],function(){
-	var bundler = watchify(browserify('./src/index.js').transform("babelify", {presets: ["es2015", "react"]}));
-	
-	function build(file){
-		if(file) gutil.log('Recompiling '+file);
-		return bundler
-			.bundle()
-			.on('error', gutil.log.bind(gutil, 'Broserify Error'))
-			.pipe(source('main.js'))
-			// .pipe(buffer())
-			// .pipe(uglify())
-			.pipe(gulp.dest('./build/scripts'))
-			.pipe(reload({stream:true}))
-	};
+function handleErrors() {
+  var args = Array.prototype.slice.call(arguments);
+  notify.onError({
+    title: 'Compile Error',
+    message: '<%= error.message %>'
+  }).apply(this, args);
+  this.emit('end'); // Keep gulp from hanging on this task
+}
 
-	build()
-	gulp.watch('css/**/*', ['styles']); // gulp watch for stylus changes
-	bundler.on('update',build)
-})
+function buildScript(file, watch) {
+  var props = {
+    entries: ['./src/' + file],
+    debug : true,
+    cache: {},
+    packageCache: {},
+    transform:  [babelify.configure({stage : 0 })]
+  };
+
+  // watchify() if watch requested, otherwise run browserify() once 
+  // var bundler = watch ? watchify(browserify(props)) : browserify(props);
+  var bundler = watchify(browserify('./src/index.js').transform("babelify", {presets: ["es2015", "react"]}));
+  
+  function rebundle() {
+    var stream = bundler.bundle();
+    return stream
+      .on('error', handleErrors)
+      .pipe(source(file))
+      .pipe(gulp.dest('./build/'))
+      .pipe(reload({stream:true}))
+  }
+
+  // listen for an update and run rebundle
+  bundler.on('update', function() {
+    rebundle();
+    gutil.log('Rebundle...');
+  });
+
+  // run it once the first time buildScript is called
+  return rebundle();
+}
+
+gulp.task('scripts', function() {
+  return buildScript('index.js', false); // this will run once because we set watch to false
+});
+
+// run 'scripts' task first, then watch for future changes
+gulp.task('default', ['images','styles','scripts','browser-sync'], function() {
+  gulp.watch('src/css/**/*', ['styles']); // gulp watch for stylus changes
+  return buildScript('index.js', true); // browserify watch for JS changes
+});
